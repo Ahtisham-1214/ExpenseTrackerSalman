@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-
-void main() {
+import 'Database/app_database.dart';
+import 'View/account_screen.dart';
+import 'View/home_screen.dart';
+import 'View/inventory_screen.dart';
+import 'View/search_screen.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppDatabase.instance.database;
   runApp(const MyApp());
 }
 
@@ -10,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Expense Tracker',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
@@ -21,7 +27,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -31,13 +36,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  // Example pages for each tab
-  static const List<Widget> _pages = <Widget>[
-    Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Search Page', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Account Page', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Inventory Page', style: TextStyle(fontSize: 24))),
-
+  final List<Widget> _pages = const [
+    HomeScreen(),
+    SearchScreen(),
+    AccountScreen(),
+    InventoryScreen(),
   ];
 
   void _onItemTapped(int index) {
