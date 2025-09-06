@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salman_expense/View/setting_screen.dart';
 import 'Database/app_database.dart';
 import 'View/account_screen.dart';
 import 'View/home_screen.dart';
@@ -41,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SearchScreen(),
     AccountScreen(),
     InventoryScreen(),
+    SettingsScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -77,6 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory),
             label: 'Inventory',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
       ),
