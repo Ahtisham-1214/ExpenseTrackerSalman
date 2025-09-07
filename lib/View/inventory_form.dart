@@ -141,7 +141,7 @@ class _InventoryFormState extends State<InventoryForm> {
                 ..add(
                   const DropdownMenuItem(
                     value: "__add_new__",
-                    child: Text("+ Add New Category"),
+                    child: Text("Add New Category"),
                   ),
                 ),
               onChanged: (value) async {
