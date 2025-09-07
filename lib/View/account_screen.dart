@@ -47,14 +47,6 @@ class AccountScreen extends StatelessWidget {
               ),
             ),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                // TODO: trigger account list refresh if needed
-              },
-            ),
-          ],
         ),
         body: const TabBarView(
           children: [
