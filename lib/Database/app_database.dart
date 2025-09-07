@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
 class AppDatabase {
   static final AppDatabase instance = AppDatabase._init();
   static Database? _database;
@@ -15,7 +16,6 @@ class AppDatabase {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-
 
     return await openDatabase(
       path,
@@ -38,7 +38,6 @@ class AppDatabase {
       )
     ''');
 
-
     // ✅ Insert Walk-in account by default
     await db.insert(
       'Accounts',
@@ -57,17 +56,17 @@ class AppDatabase {
 ''');
 
     // Create Products table
-    // await db.execute('''
-    //   CREATE TABLE Products (
-    //     product_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //     name TEXT NOT NULL,
-    //     category TEXT,
-    //     unit TEXT,
-    //     purchase_price REAL,
-    //     selling_price REAL,
-    //     stock_quantity REAL DEFAULT 0
-    //   )
-    // ''');
+    await db.execute('''
+      CREATE TABLE Products (
+        product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT,
+        unit TEXT,
+        purchase_price REAL,
+        selling_price REAL,
+        stock_quantity REAL DEFAULT 0
+      )
+    ''');
 
     // Create Transactions table
     // await db.execute('''
