@@ -6,7 +6,7 @@ import 'Database/app_database.dart';
 import 'View/account_screen.dart';
 import 'View/home_screen.dart';
 import 'View/inventory_screen.dart';
-import 'View/search_screen.dart';
+import 'View/ledger_screen.dart';
 import 'View/theme_provider.dart';
 
 Future<void> main() async {
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _pages = const [
     HomeScreen(),
-    SearchScreen(),
+    LedgerScreen(),
     AccountScreen(),
     InventoryScreen(),
     SettingsScreen(),
@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Ledger'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
           BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'Inventory'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
