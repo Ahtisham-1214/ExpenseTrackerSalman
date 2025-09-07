@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:salman_expense/View/setting_screen.dart';
+import 'package:salman_expense/View/spalsh_screen.dart';
 import 'Database/app_database.dart';
 import 'View/account_screen.dart';
 import 'View/home_screen.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: themeProvider.primaryColor),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Ahtisham Shaikh'),
+      home: SplashScreen(),
     );
   }
 }
