@@ -5,7 +5,7 @@ class Account {
   final String createdAt;   // always set (custom or system default)
   final String? updatedAt;
   final String type;
-
+  final String? phoneNumber;
   Account({
     this.id,
     required this.name,
@@ -13,6 +13,7 @@ class Account {
     this.openingBalance = 0,
     required this.createdAt,
     this.updatedAt,
+    this.phoneNumber
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +24,7 @@ class Account {
       'opening_balance': openingBalance,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'phone_number': phoneNumber ?? ''
     };
   }
 
@@ -34,6 +36,7 @@ class Account {
       openingBalance: map['opening_balance'] ?? 0,
       createdAt: map['created_at'],
       updatedAt: map['updated_at'],
+      phoneNumber: map['phone_number'],
     );
   }
 }
