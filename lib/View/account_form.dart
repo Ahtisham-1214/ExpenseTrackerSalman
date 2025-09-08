@@ -17,6 +17,8 @@ class _AccountFormState extends State<AccountForm> {
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _typeController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _organizationController = TextEditingController();
   final _types = ['Supplier', 'Customer', 'Income', 'Expense'];
 
   Future<void> _validateAccount() async {
@@ -27,12 +29,15 @@ class _AccountFormState extends State<AccountForm> {
         final date = _dateController.text.isEmpty ? DateTime.now().toString().split(" ")[0] : _dateController.text;
         final time = _timeController.text.isEmpty ? TimeOfDay.now().format(context) : _timeController.text;
         final type = _typeController.text;
+        final phoneNumber = _phoneNumberController.text;
+
 
         Account account = Account(
           name: accountName,
           type: type,
           openingBalance: openingBalance,
           createdAt: "$date $time",
+          phoneNumber: phoneNumber,
         );
 
         final accountDao = AccountDao(await AppDatabase.instance.database);
@@ -42,6 +47,7 @@ class _AccountFormState extends State<AccountForm> {
         _openingBalanceController.clear();
         _dateController.clear();
         _timeController.clear();
+        _phoneNumberController.clear();
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Account created successfully")),
@@ -71,6 +77,31 @@ class _AccountFormState extends State<AccountForm> {
               ),
               validator: (value) =>
               value == null || value.isEmpty ? "Please enter the account holder name" : null,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _phoneNumberController,
+              decoration: const InputDecoration(
+                labelText: "Phone",
+                prefixIcon: Icon(Icons.phone),
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                // If the value is null or empty, it's valid because the field is optional
+                if (value == null || value.isEmpty) {
+                  return null;
+                }
+                // If a value is entered, it must be exactly 11 digits
+                // You might also want to check if it contains only digits
+                final isDigitsOnly = RegExp(r'^[0-9]{11}$').hasMatch(value);
+                if (!isDigitsOnly) {
+                  return "Please enter only digits";
+                }
+                if (value.length != 11) {
+                  return "Phone number must be 11 digits";
+                }
+                return null; // Value is valid
+              },
             ),
             const SizedBox(height: 20),
             TextFormField(
