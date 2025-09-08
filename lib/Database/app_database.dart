@@ -34,7 +34,8 @@ class AppDatabase {
         type TEXT CHECK(type IN ('Supplier', 'Customer','Asset','Income','Expense', 'Walk-in')) NOT NULL,
         opening_balance REAL DEFAULT 0,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        phone_number TEXT
       )
     ''');
 
