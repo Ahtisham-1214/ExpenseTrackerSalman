@@ -90,6 +90,18 @@ class _AccountListState extends State<AccountList> {
             ),
             const SizedBox(height: 8),
 
+            // phone
+            Row(
+              children: [
+                Icon(Icons.phone,
+                    color: theme.colorScheme.primary, size: 18),
+                const SizedBox(width: 8),
+                Text("Phone: ${account.phoneNumber}",
+                    style: textTheme.bodyMedium),
+              ],
+            ),
+            const SizedBox(height: 4),
+
             // Balance
             Row(
               children: [
