@@ -1,7 +1,32 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../Database/app_database.dart';
+import '../Database/product_dao.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreen createState() => _HomeScreen();
+}
+
+class _HomeScreen extends State<HomeScreen> {
+  int totalProducts = 0;
+
+  Future<void> getProducts() async {
+    final db = await AppDatabase.instance.database;
+    final productDao = ProductDao(db);
+    final count = await productDao.getProductsCount();
+    setState(() {
+      totalProducts = count;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                   child: _buildStatCard(
                     context,
                     title: "Total Products",
-                    value: "0",
+                    value: "$totalProducts",
                     icon: Icons.inventory,
                     color: Colors.orange,
                   ),
