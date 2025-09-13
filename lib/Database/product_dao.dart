@@ -19,4 +19,9 @@ class ProductDao {
     final result = await db.rawQuery("SELECT DISTINCT category FROM Products");
     return result.map((row) => row['category'] as String).toList();
   }
+
+  Future<int> getProductsCount() async {
+    final result = await db.rawQuery("SELECT COUNT(*) FROM Products");
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
 }
