@@ -78,6 +78,20 @@ class _HomeScreen extends State<HomeScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    context,
+                    title: "Total Debt",
+                    value: "0 Rs", // 👈 later fetch from DB
+                    icon: Icons.money_off,
+                    color: Colors.redAccent,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
