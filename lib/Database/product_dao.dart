@@ -24,4 +24,33 @@ class ProductDao {
     final result = await db.rawQuery("SELECT COUNT(*) FROM Products");
     return Sqflite.firstIntValue(result) ?? 0;
   }
+
+  Future<Product?> getProductById(int id) async {
+    final result = await db.query(
+      'Products',
+      where: 'product_id = ?',
+      whereArgs: [id],
+    );
+    if (result.isNotEmpty) {
+      return Product.fromMap(result.first);
+    }
+    return null;
+  }
+
+  Future<int> updateProduct(Product product) async {
+    return await db.update(
+      'Products',
+      product.toMap(),
+      where: 'product_id = ?',
+      whereArgs: [product.id],
+    );
+  }
+
+  Future<int> deleteProduct(int id) async {
+    return await db.delete(
+      'Products',
+      where: 'product_id = ?',
+      whereArgs: [id],
+    );
+  }
 }
