@@ -7,6 +7,8 @@ import 'View/account_screen.dart';
 import 'View/home_screen.dart';
 import 'View/inventory_screen.dart';
 import 'View/ledger_screen.dart';
+import 'View/sales_screen.dart';
+import 'View/transaction_screen.dart';
 import 'View/theme_provider.dart';
 
 Future<void> main() async {
@@ -50,18 +52,27 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = const [
+  final List<Widget> _bottomNavPages = const [
     HomeScreen(),
+    SalesScreen(),
     LedgerScreen(),
-    AccountScreen(),
-    InventoryScreen(),
-    SettingsScreen(),
+    TransactionScreen(),
   ];
 
-  void _onItemTapped(int index) {
+  Widget _currentPage = const HomeScreen();
+
+  void _onBottomNavTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _currentPage = _bottomNavPages[index];
     });
+  }
+
+  void _onDrawerItemTapped(Widget page) {
+    setState(() {
+      _currentPage = page;
+    });
+    Navigator.pop(context); // Close the drawer
   }
 
   @override
@@ -71,17 +82,47 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title),
       ),
-      body: _pages[_selectedIndex],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: const Text(
+                "Menu",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.inventory),
+              title: const Text("Inventory"),
+              onTap: () => _onDrawerItemTapped(const InventoryScreen()),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Account"),
+              onTap: () => _onDrawerItemTapped(const AccountScreen()),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () => _onDrawerItemTapped(const SettingsScreen()),
+            ),
+          ],
+        ),
+      ),
+      body: _currentPage,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: _onBottomNavTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.point_of_sale), label: 'Sales'),
           BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Ledger'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: 'Inventory'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt), label: 'Transaction'),
         ],
       ),
     );
