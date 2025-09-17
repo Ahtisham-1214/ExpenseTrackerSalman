@@ -39,6 +39,146 @@ class InventoryListState extends State<InventoryList> {
     await _fetchProducts();
   }
 
+  Future<void> _editProduct(Product product) async {
+    final nameController = TextEditingController(text: product.name);
+    final categoryController = TextEditingController(text: product.category);
+    final unitController = TextEditingController(text: product.unit);
+    final purchasePriceController = TextEditingController(text: product.purchasePrice.toString());
+    final sellingPriceController = TextEditingController(text: product.sellingPrice.toString());
+    final stockController = TextEditingController(text: product.stockQuantity.toString());
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Product'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Product Name'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: categoryController,
+                decoration: const InputDecoration(labelText: 'Category'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: unitController,
+                decoration: const InputDecoration(labelText: 'Unit'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: purchasePriceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Purchase Price'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: sellingPriceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Selling Price'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: stockController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Stock Quantity'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      try {
+        final updatedProduct = Product(
+          id: product.id,
+          name: nameController.text.trim(),
+          category: categoryController.text.trim(),
+          unit: unitController.text.trim(),
+          purchasePrice: double.tryParse(purchasePriceController.text) ?? 0.0,
+          sellingPrice: double.tryParse(sellingPriceController.text) ?? 0.0,
+          stockQuantity: double.tryParse(stockController.text) ?? 0.0,
+        );
+
+        final db = await AppDatabase.instance.database;
+        final productDao = ProductDao(db);
+        await productDao.updateProduct(updatedProduct);
+
+        await _fetchProducts();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Product updated successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error updating product: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _deleteProduct(Product product) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Product'),
+        content: Text('Are you sure you want to delete "${product.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      try {
+        final db = await AppDatabase.instance.database;
+        final productDao = ProductDao(db);
+        await productDao.deleteProduct(product.id!);
+
+        await _fetchProducts();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Product deleted successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting product: $e')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_products.isEmpty) {
@@ -263,6 +403,23 @@ class InventoryListState extends State<InventoryList> {
                         ? Colors.orange.shade700
                         : Colors.green.shade700)
                     : Colors.red.shade700,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton.icon(
+                onPressed: () => _editProduct(product),
+                icon: const Icon(Icons.edit, size: 16),
+                label: const Text('Edit'),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () => _deleteProduct(product),
+                icon: const Icon(Icons.delete, size: 16, color: Colors.red),
+                label: const Text('Delete', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
         ],
       ),
