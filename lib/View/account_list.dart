@@ -25,6 +25,144 @@ class _AccountListState extends State<AccountList> {
     return accountDao.getAllAccounts();
   }
 
+  Future<void> _editAccount(Account account) async {
+    final nameController = TextEditingController(text: account.name);
+    final balanceController = TextEditingController(text: account.openingBalance.toString());
+    final phoneController = TextEditingController(text: account.phoneNumber ?? '');
+    final remarksController = TextEditingController(text: '');
+    
+    String selectedType = account.type;
+    final types = ['Supplier', 'Customer', 'Income', 'Expense'];
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Account'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: balanceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Opening Balance'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: phoneController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedType,
+                decoration: const InputDecoration(labelText: 'Type'),
+                items: types.map((type) => DropdownMenuItem(
+                  value: type,
+                  child: Text(type),
+                )).toList(),
+                onChanged: (value) => selectedType = value!,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      try {
+        final updatedAccount = Account(
+          id: account.id,
+          name: nameController.text.trim(),
+          type: selectedType,
+          openingBalance: double.tryParse(balanceController.text) ?? 0.0,
+          createdAt: account.createdAt,
+          updatedAt: DateTime.now().toIso8601String(),
+          phoneNumber: phoneController.text.trim().isEmpty ? null : phoneController.text.trim(),
+        );
+
+        final db = await AppDatabase.instance.database;
+        final accountDao = AccountDao(db);
+        await accountDao.updateAccount(updatedAccount);
+
+        setState(() {
+          _accountsFuture = _fetchAccounts();
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account updated successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error updating account: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _deleteAccount(Account account) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: Text('Are you sure you want to delete "${account.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      try {
+        final db = await AppDatabase.instance.database;
+        final accountDao = AccountDao(db);
+        await accountDao.deleteAccount(account.id!);
+
+        setState(() {
+          _accountsFuture = _fetchAccounts();
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account deleted successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting account: $e')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Account>>(
@@ -144,13 +282,13 @@ class _AccountListState extends State<AccountList> {
                 PopupMenuButton<String>(
                   icon: Icon(Icons.more_vert,
                       color: theme.colorScheme.onSurfaceVariant),
-                  onSelected: (value) {
+                  onSelected: (value) async {
                     switch (value) {
                       case 'edit':
-                      // TODO: Edit account
+                        await _editAccount(account);
                         break;
                       case 'delete':
-                      // TODO: Delete account
+                        await _deleteAccount(account);
                         break;
                     }
                   },
