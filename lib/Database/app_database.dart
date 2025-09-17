@@ -70,43 +70,43 @@ class AppDatabase {
     ''');
 
     // Create Transactions table
-    // await db.execute('''
-    //   CREATE TABLE Transactions (
-    //     transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //     date TEXT DEFAULT CURRENT_TIMESTAMP,
-    //     type TEXT CHECK(type IN ('Purchase','Sale','Payment','Receipt')) NOT NULL,
-    //     account_id INTEGER NOT NULL,
-    //     total_amount REAL,
-    //     remarks TEXT,
-    //     FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
-    //   )
-    // ''');
+    await db.execute('''
+      CREATE TABLE Transactions (
+        transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT DEFAULT CURRENT_TIMESTAMP,
+        type TEXT CHECK(type IN ('Purchase','Sale','Payment','Receipt')) NOT NULL,
+        account_id INTEGER NOT NULL,
+        total_amount REAL,
+        remarks TEXT,
+        FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
+      )
+    ''');
 
     // Create TransactionDetails table
-    // await db.execute('''
-    //   CREATE TABLE TransactionDetails (
-    //     detail_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //     transaction_id INTEGER,
-    //     product_id INTEGER,
-    //     quantity REAL,
-    //     price REAL,
-    //     FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
-    //     FOREIGN KEY (product_id) REFERENCES Products(product_id)
-    //   )
-    // ''');
+    await db.execute('''
+      CREATE TABLE TransactionDetails (
+        detail_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        transaction_id INTEGER,
+        product_id INTEGER,
+        quantity REAL,
+        price REAL,
+        FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
+        FOREIGN KEY (product_id) REFERENCES Products(product_id)
+      )
+    ''');
 
     // Create Ledger table
-    // await db.execute('''
-    //   CREATE TABLE Ledger (
-    //     ledger_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //     transaction_id INTEGER,
-    //     account_id INTEGER,
-    //     debit REAL DEFAULT 0,
-    //     credit REAL DEFAULT 0,
-    //     FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
-    //     FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
-    //   )
-    // ''');
+    await db.execute('''
+      CREATE TABLE Ledger (
+        ledger_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        transaction_id INTEGER,
+        account_id INTEGER,
+        debit REAL DEFAULT 0,
+        credit REAL DEFAULT 0,
+        FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
+        FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
+      )
+    ''');
   }
 
   Future close() async {
